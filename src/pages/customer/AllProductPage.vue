@@ -124,23 +124,35 @@
 
         <!-- Product Grid -->
         <div class="product-grid">
-          <div class="product-card" v-for="product in paginatedProducts" :key="product.id">
-            <div class="product-card__img">
-              <img :src="product.images?.[0].img_url" :alt="product.product_name" />
-              <button class="product-card__wishlist" @click="product.wished = !product.wished">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" :fill="product.wished ? '#ef4444' : 'none'" :stroke="product.wished ? '#ef4444' : '#999'" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                </svg>
-              </button>
-            </div>
-            <div class="product-card__info">
-              <div class="product-card__top">
-                <h3 class="product-card__name">{{ product.product_name }}</h3>
+          <div
+            class="product-card"
+            v-for="product in paginatedProducts"
+            :key="product.product_id"
+          >
+            <RouterLink
+              :to="{ name: 'ProductDetailPage', params: { id: product.product_id } }"
+              class="product-card__link"
+            >
+              <div class="product-card__img">
+                <img :src="product.images?.[0]?.img_url" :alt="product.product_name" />
+                <button
+                  class="product-card__wishlist"
+                  @click.prevent.stop="product.wished = !product.wished"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" :fill="product.wished ? '#ef4444' : 'none'" :stroke="product.wished ? '#ef4444' : '#999'" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                </button>
               </div>
-              <p class="product-card__desc">{{ product.description }}</p>
-              <p class="product-card__price">${{ product.product_price.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</p>
-              <button class="product-card__buy">BUY NOW</button>
-            </div>
+              <div class="product-card__info">
+                <div class="product-card__top">
+                  <h3 class="product-card__name">{{ product.product_name }}</h3>
+                </div>
+                <p class="product-card__desc">{{ product.description }}</p>
+                <p class="product-card__price">${{ product.product_price.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</p>
+                <button class="product-card__buy" @click.prevent.stop>BUY NOW</button>
+              </div>
+            </RouterLink>
           </div>
         </div>
 
@@ -718,6 +730,14 @@ export default {
 .product-card:hover {
   box-shadow: 0 6px 24px rgba(0,0,0,0.1);
   border-color: #d8d8d8;
+}
+
+.product-card__link {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
 }
 
 .product-card__img {

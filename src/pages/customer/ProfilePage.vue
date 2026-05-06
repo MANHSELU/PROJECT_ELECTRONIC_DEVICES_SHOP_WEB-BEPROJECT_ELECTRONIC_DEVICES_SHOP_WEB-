@@ -35,7 +35,7 @@
           <div class="sidebar__avatar">
             <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=160&q=80" alt="Avatar" />
           </div>
-          <p class="sidebar__name">The Collector</p>
+          <p class="sidebar__name">{{ profile.userName }}</p>
           <p class="sidebar__role">Premium Member</p>
         </div>
 
@@ -77,7 +77,7 @@
         <div class="card">
           <div class="card__header">
             <h2 class="card__title">Profile Information</h2>
-            <button class="btn-edit">
+            <button class="btn-edit" @click="updateProfile">
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
               </svg>
@@ -88,33 +88,31 @@
           <div class="info-grid">
             <div class="info-item">
               <label class="info-label">FULL NAME</label>
-              <input class="info-input" v-model="profile.fullName" type="text" />
+              <input class="info-input" v-model="profile.userName" type="text" />
             </div>
             <div class="info-item">
               <span class="info-label">EMAIL ADDRESS</span>
-              <span class="info-value">j.thorne@atelier.tech</span>
+              <span class="info-value" >{{ profile.email }}</span>
             </div>
             <div class="info-item">
               <label class="info-label">PHONE NUMBER</label>
               <input class="info-input" v-model="profile.phone" type="text" />
             </div>
-            <div class="info-item">
-              <span class="info-label">MEMBER SINCE</span>
-              <span class="info-value">October 2022</span>
+           <div class="info-item">
+               <label class="info-label">ADDRESS</label>
+              <input class="info-input" v-model="profile.address" type="text" />
             </div>
           </div>
 
           <div class="info-grid">
             <div class="info-item">
               <span class="info-label">ROLE</span>
-              <span class="info-value">Premium Member</span>
+              <span class="info-value" >{{ profile.role }}</span>
             </div>
+           
             <div class="info-item">
-              <span class="info-label">ACCOUNT STATUS</span>
-              <span class="info-status info-status--active">
-                <span class="info-status__dot"></span>
-                Active
-              </span>
+              <span class="info-label">MEMBER SINCE</span>
+              <span class="info-value">October 2022</span>
             </div>
           </div>
         </div>
@@ -247,16 +245,36 @@
 </template>
 
 <script>
+import { getProfile } from '../../services/Auth.Service/GetProFile.Service';
+import { updateProfile } from '../../services/Auth.Service/UpdateProfile.Service';
+import { alertSuccess, alertError, alertWarning, alertInfo } from '@/composables/useAlert';
+
 export default {
   name: 'ProfilePage',
   data() {
     return {
-      profile: {
-        fullName: 'Julian Alexander Thorne',
-        phone: '+1 (555) 892-0431',
-      },
+      profile: {},
     }
   },
+  async mounted () {
+    await this.fetchGetProfile()
+  },
+  methods: {
+    async fetchGetProfile () {
+      const res = await getProfile();
+      this.profile = res;
+      console.log("profile:", res);
+    },
+    async updateProfile () {
+      try {
+        const res = await updateProfile(this.profile);
+        await this.fetchGetProfile();
+        alertSuccess(res.message);
+      } catch (err) {
+        alertError(err);
+      }
+    },
+  }
 }
 </script>
 
